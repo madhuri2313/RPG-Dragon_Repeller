@@ -67,16 +67,30 @@ const locations = [
         "button text": ["Attack", "Dodge", "Run"],
         "button functions" : [attack, dodge, goTown],
         text: "You are fighting a monster."
-      }
-    
-];
+    },{
+        name: "kill monster",
+        "button text" : ["Go to town square", "Go to town square", "Go to town square"],
+        "button functions": [goTown, goTown, goTown],
+        text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.'
+    },{
+      name: "lose",
+      "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+      "button functions": [restart, restart, restart],
+      text: "You die. ☠️"
+    },{
+        name: "Win",
+        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+        "button functions": [restart, restart, restart],
+        text: "You defeat the dragon! YOU WIN THE GAME! 🎉"
+      }];
+
 //initialize buttons
 button1.onclick = goStore;
 button2.onclick = goCave;
 button3.onclick = fightDragon;
 
 function update(location) {
-
+    monsterStats.style.display = "none";
     button1.innerText = location["button text"][0];
     button2.innerText = location["button text"][1];
     button3.innerText = location["button text"][2];
@@ -166,7 +180,7 @@ function goFight() {
   monsterHealth = monsters[fighting].health;
   monsterStats.style.display = "block";
   monsterName.innerText = monsters[fighting].name;
-  monsterHealthText.innerText = monsters[fighting].health;
+  monsterHealthText.innerText = monsterHealth;
 }
 
 function attack() {
@@ -177,20 +191,40 @@ function attack() {
   healthText.innerText = health;
   monsterHealthText.innerText = monsterHealth;
 
-  if(health <= 0) {
+  if (health <= 0) {
     lose();
   } else if (monsterHealth <= 0) {
-    defeatMonster();
+    fighting === 2 ? winGame() : defeatMonster();
   }
 }
 
-function dodge() {}
+function dodge() {
+  text.innerText = "You dodge the attack from the " + monsters[fighting].name
+}
 
-function defeatMonster() {}
+function defeatMonster() {
+  gold += Math.floor(monsters[fighting].level * 6.7);
+  xp += monsters[fighting].level;
+  goldText.innerText = gold;
+  xpText.innerText = xp;
+  update(locations[4]);
+}
 
-function lose() {}
+function lose() {
+  update(locations[5]);
+}
 
-
+function restart() {
+  xp = 0;
+  health = 100;
+  gold = 50;
+  currentWeapon = 0;
+  inventory = ["stick"];
+  goldText.innerText = gold;
+  healthText.innerText = health;
+  xpText.innerText = xp;
+  goTown();
+}
 
 
 
